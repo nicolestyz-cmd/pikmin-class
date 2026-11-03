@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>皮克敏班級日常任務整合系統</title>
+  <style>
+    :root {
+      --morandi-green: #e2ebd9;
+      --morandi-yellow: #f7f0e6;
+      --morandi-blue: #e4ecef;
+      --card-bg: #ffffff;
+      --text-dark: #2d3748;
+      --p-red: #e53e3e;
+      --p-yellow: #d69e2e;
+      --p-blue: #3182ce;
+      --p-purple: #805ad5;
+      --p-white: #718096;
+      --p-pink: #ed64a6;
+      --p-rock: #4a5568;
+      --p-ice: #319795;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    }
+
+    body {
+      background-color: var(--morandi-green);
+      background-image: radial-gradient(#b0bec5 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+      color: var(--text-dark);
+      padding: 16px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.4s ease;
+    }
+
+    body.mode-morning { background-color: var(--morandi-green); }
+    body.mode-lunch { background-color: var(--morandi-yellow); }
+    body.mode-wednesday { background-color: var(--morandi-blue); }
+
+    header {
+      background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(240,248,240,0.95) 100%);
+      padding: 18px 30px;
+      border-radius: 28px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 16px;
+      border: 3px solid #ffffff;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 12px;
+    }
+
+    .tab-btn {
+      background: #edf2f7;
+      color: #4a5568;
+      border: 2.5px solid #cbd5e0;
+      padding: 12px 22px;
+      border-radius: 22px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    }
+
+    .tab-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    }
+
+    .tab-btn.active {
+      background: #38a169;
+      color: white;
+      border-color: #276749;
+      box-shadow: 0 6px 18px rgba(56, 161, 105, 0.4);
+      transform: scale(1.06);
+    }
+
+    body.mode-lunch .tab-btn.active {
+      background: #dd6b20;
+      border-color: #9c4221;
+      box-shadow: 0 6px 18px rgba(221, 107, 32, 0.4);
+    }
+
+    body.mode-wednesday .tab-btn.active {
+      background: #3182ce;
+      border-color: #2b6cb0;
+      box-shadow: 0 6px 18px rgba(49, 130, 206, 0.4);
+    }
+
+    .header-center {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .date-time-box {
+      background: #ffffff;
+      border: 3px solid #f6ad55;
+      padding: 10px 24px;
+      border-radius: 24px;
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: #7b341e;
+      box-shadow: 0 4px 12px rgba(246, 173, 85, 0.2);
+    }
+
+    .task-start-btn {
+      background: #3182ce;
+      color: white;
+      border: 2.5px solid #2b6cb0;
+      padding: 10px 22px;
+      border-radius: 22px;
+      font-size: 1.1rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3);
+      transition: all 0.2s;
+    }
+
+    .task-start-btn:hover {
+      transform: scale(1.05);
+      background: #2b6cb0;
+    }
+
+    .task-start-time {
+      font-size: 1.05rem;
+      color: #2b6cb0;
+      font-weight: 900;
+      background: #ebf8ff;
+      padding: 10px 18px;
+      border-radius: 18px;
+      border: 2.5px solid #bee3f8;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 10px;
+    }
+
+    .export-btn {
+      background: #38a169;
+      color: white;
+      border: 2.5px solid #276749;
+      padding: 10px 18px;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(56, 161, 105, 0.2);
+      transition: all 0.2s;
+    }
+
+    .export-btn:hover { background: #2f855a; transform: translateY(-2px); }
+
+    .reset-btn {
+      background: #edf2f7;
+      color: #718096;
+      border: 2.5px solid #cbd5e0;
+      padding: 10px 16px;
+      border-radius: 16px;
+      font-size: 0.95rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .students-single-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+
+    .student-card {
+      background: white;
+      border-radius: 20px;
+      padding: 14px 10px 16px 10px;
+      flex: 1;
+      min-width: 155px;
+      max-width: 190px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-top: 8px solid #ccc;
+    }
+
+    .card-1 { border-color: var(--p-red); }
+    .card-2 { border-color: var(--p-yellow); }
+    .card-3 { border-color: var(--p-blue); }
+    .card-4 { border-color: var(--p-purple); }
+    .card-5 { border-color: var(--p-white); }
+    .card-6 { border-color: var(--p-pink); }
+    .card-7 { border-color: var(--p-rock); }
+    .card-8 { border-color: var(--p-ice); }
+
+    .seat-badge {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: white;
+      padding: 4px 16px;
+      border-radius: 14px;
+      margin-bottom: 6px;
+    }
+
+    .bg-1 { background: var(--p-red); }
+    .bg-2 { background: var(--p-yellow); color: #333; }
+    .bg-3 { background: var(--p-blue); }
+    .bg-4 { background: var(--p-purple); }
+    .bg-5 { background: #718096; }
+    .bg-6 { background: var(--p-pink); }
+    .bg-7 { background: var(--p-rock); }
+    .bg-8 { background: var(--p-ice); }
+
+    .pikmin-name {
+      font-size: 1.05rem;
+      font-weight: bold;
+      color: var(--text-dark);
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .task-group {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .task-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .btn-task {
+      width: 100%;
+      padding: 12px 6px;
+      border-radius: 14px;
+      border: 2px solid #e2e8f0;
+      background: #f8fafc;
+      color: var(--text-dark);
+      font-size: 0.98rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .btn-task.completed {
+      background: #f0fff4;
+      border-color: #48bb78;
+      color: #276749;
+    }
+
+    .time-tag {
+      font-size: 0.82rem;
+      color: #276749;
+      font-weight: 800;
+      margin-top: 8px;
+      height: 18px;
+      visibility: hidden;
+    }
+
+    .time-tag.show { visibility: visible; }
+
+    .duty-bar {
+      background: rgba(255,255,255,0.92);
+      padding: 12px 24px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .duty-container {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .btn-duty {
+      flex: 1;
+      padding: 12px;
+      border-radius: 16px;
+      border: 2.5px solid #f6ad55;
+      background: #fffaf0;
+      color: #7b341e;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-duty.completed {
+      background: #f0fff4;
+      border-color: #48bb78;
+      color: #276749;
+    }
+
+    .duty-time {
+      font-size: 1rem;
+      color: #276749;
+      font-weight: 800;
+    }
+
+    .pikmin-garden {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      padding: 10px 30px 0 30px;
+      margin-top: auto;
+      pointer-events: none;
+    }
+
+    .pikmin-sprite {
+      font-size: 2.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: sway 3s ease-in-out infinite alternate;
+    }
+
+    .flower-stem { font-size: 1.2rem; margin-bottom: -8px; }
+
+    @keyframes sway {
+      0% { transform: rotate(-5deg); }
+      100% { transform: rotate(5deg); }
+    }
+
+    .confetti {
+      position: fixed;
+      pointer-events: none;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      animation: floatUp 1s ease-out forwards;
+      z-index: 99;
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-80px); }
+    }
+  </style>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body class="mode-morning">
+
+  <header>
+    <div class="nav-tabs">
+      <button class="tab-btn active" id="tabMorning" onclick="switchSystem('morning')">☀️ 晨間點名</button>
+      <button class="tab-btn" id="tabLunch" onclick="switchSystem('lunch')">🍱 飯後工作</button>
+      <button class="tab-btn" id="tabWed" onclick="switchSystem('wednesday')">🧹 週三任務</button>
+    </div>
+
+    <div class="header-center">
+      <div class="date-time-box" id="liveClock">📅 讀取中...</div>
+      <button class="task-start-btn" id="taskStartBtn" onclick="startGlobalTask()" style="display: none;">⏱️ 小任務開始</button>
+      <div class="task-start-time" id="taskStartTimeDisplay" style="display: none;">開始：未記錄</div>
+    </div>
+
+    <div class="action-btns">
+      <button class="export-btn" onclick="exportData('week')">📊 匯出本週 (CSV)</button>
+      <button class="export-btn" onclick="exportData('month')">📅 匯出本月 (CSV)</button>
+      <button class="reset-btn" onclick="resetToday()">🔄 重置今天</button>
+    </div>
+  </header>
+
+  <div class="students-single-row" id="studentsRow"></div>
+
+  <div class="duty-bar" id="footerDuty" style="display: none;">
+    <div class="duty-container">
+      <button class="btn-duty" id="dutyBtn" onclick="toggleDuty()">⭐ 值日生：倒垃圾</button>
+      <div class="duty-time" id="dutyTimeTag">未完成</div>
+    </div>
+  </div>
+
+  <div class="pikmin-garden">
+    <div class="pikmin-sprite"><span class="flower-stem">🌸</span>🔴</div>
+    <div class="pikmin-sprite"><span class="flower-stem">🌱</span>🟡</div>
+    <div class="pikmin-sprite"><span class="flower-stem">🍃</span>🔵</div>
+    <div class="pikmin-sprite"><span class="flower-stem">🌸</span>🟣</div>
+    <div class="pikmin-sprite"><span class="flower-stem">🌱</span>⚪</div>
+    <div class="pikmin-sprite"><span class="flower-stem">🌸</span>🌸</div>
+    <div class="pikmin-sprite"><span class="flower-stem">🍃</span>🪨</div>
+    <div class="pikmin-sprite"><span class="flower-stem">❄️</span>🧊</div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      databaseURL: "https://morning-check-356db-default-rtdb.firebaseio.com/"
+    };
+
+    let db = null;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.database();
+    } catch (e) {
+      console.warn("Firebase 初始化跳過：", e);
+    }
+
+    const pikminData = [
+      { id: 1, name: "🔴 紅色皮克敏" },
+      { id: 2, name: "🟡 黃色皮克敏" },
+      { id: 3, name: "🔵 藍色皮克敏" },
+      { id: 4, name: "🟣 紫色皮克敏" },
+      { id: 5, name: "⚪ 白色皮克敏" },
+      { id: 6, name: "🌸 羽翼皮克敏" },
+      { id: 7, name: "🪨 岩石皮克敏" },
+      { id: 8, name: "🧊 冰霜皮克敏" }
+    ];
+
+    const taskConfigs = {
+      morning: [
+        { key: 'arrived', label: '✋ 我到了' },
+        { key: 'hw', label: '📖 交作業' },
+        { key: 'task', label: '✍️ 小任務' }
+      ],
+      lunch: [
+        { key: 't1', label: '🪑 抬椅子' },
+        { key: 't2', label: '🪥 刷牙' },
+        { key: 't3', label: '🧹 打掃' },
+        { key: 't4', label: '🚻 上廁所' },
+        { key: 't5', label: '💧 漱口' }
+      ],
+      wednesday: [
+        { key: 't1', label: '🪥 刷牙' },
+        { key: 't2', label: '🗄️ 整理抽屜' },
+        { key: 't3', label: '🪑 整理椅子下方' },
+        { key: 't4', label: '📚 整理書本' },
+        { key: 't5', label: '🚪 整理櫃子' },
+        { key: 't6', label: '📝 抄聯絡簿' }
+      ]
+    };
+
+    let currentSystem = 'morning';
+    let currentCloudData = {};
+    const todayKey = getTodayKey();
+
+    if (new Date().getDay() === 3) currentSystem = 'wednesday';
+
+    // 立即初始化渲染畫面（不需等待雲端回應，確保畫面立刻出現）
+    updateUIState();
+    renderCards();
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // 非同步綁定雲端資料庫
+    if (db) {
+      db.ref('class_system/' + todayKey).on('value', (snapshot) => {
+        currentCloudData = snapshot.val() || {};
+        if (currentCloudData.system) {
+          currentSystem = currentCloudData.system;
+        }
+        updateUIState();
+        renderCards();
+      }, (error) => {
+        console.error("雲端同步發生錯誤：", error);
+      });
+    }
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(type) {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const now = audioCtx.currentTime;
+
+        if (type === 'hi') {
+          const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+          osc.type = 'sine'; osc.frequency.setValueAtTime(400, now);
+          osc.frequency.exponentialRampToValueAtTime(750, now + 0.18);
+          gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.start(now); osc.stop(now + 0.2);
+        } else if (type === 'kaching') {
+          const osc1 = audioCtx.createOscillator(), osc2 = audioCtx.createOscillator(), gain = audioCtx.createGain();
+          osc1.type = 'triangle'; osc2.type = 'sine';
+          osc1.frequency.setValueAtTime(1200, now); osc1.frequency.setValueAtTime(2400, now + 0.04);
+          osc2.frequency.setValueAtTime(1600, now); osc2.frequency.setValueAtTime(3200, now + 0.04);
+          gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc1.connect(gain); osc2.connect(gain); gain.connect(audioCtx.destination);
+          osc1.start(now); osc2.start(now); osc1.stop(now + 0.35); osc2.stop(now + 0.35);
+        } else if (type === 'cheer') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+            gain.gain.setValueAtTime(0.2, now + idx * 0.06); gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.06 + 0.2);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(now + idx * 0.06); osc.stop(now + idx * 0.06 + 0.2);
+          });
+        }
+      } catch (e) { console.warn("音效播放失敗", e); }
+    }
+
+    function getTodayKey() {
+      const today = new Date();
+      return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    }
+
+    function getCurrentTimeString() {
+      const now = new Date();
+      return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+    }
+
+    function startGlobalTask() {
+      const timeStr = getCurrentTimeString();
+      if (db) db.ref(`class_system/${todayKey}/morning/globalTaskStart`).set(timeStr);
+      playSound('hi');
+    }
+
+    function switchSystem(sys) {
+      currentSystem = sys;
+      if (db) db.ref(`class_system/${todayKey}/system`).set(sys);
+      updateUIState();
+      renderCards();
+    }
+
+    function updateUIState() {
+      document.body.className = `mode-${currentSystem}`;
+      document.getElementById('tabMorning').className = `tab-btn ${currentSystem === 'morning' ? 'active' : ''}`;
+      document.getElementById('tabLunch').className = `tab-btn ${currentSystem === 'lunch' ? 'active' : ''}`;
+      document.getElementById('tabWed').className = `tab-btn ${currentSystem === 'wednesday' ? 'active' : ''}`;
+
+      const isMorning = (currentSystem === 'morning');
+      document.getElementById('taskStartBtn').style.display = isMorning ? 'inline-block' : 'none';
+      document.getElementById('footerDuty').style.display = isMorning ? 'none' : 'flex';
+
+      const sysData = currentCloudData.morning || {};
+      const taskStartDisplay = document.getElementById('taskStartTimeDisplay');
+      if (isMorning && sysData.globalTaskStart) {
+        taskStartDisplay.style.display = 'inline-block';
+        taskStartDisplay.innerText = `⏱️ 開始：${sysData.globalTaskStart}`;
+      } else {
+        taskStartDisplay.style.display = 'none';
+      }
+    }
+
+    function getActiveTasks() {
+      if (currentSystem === 'morning') return taskConfigs.morning;
+      if (currentSystem === 'wednesday') return taskConfigs.wednesday;
+      let list = [...taskConfigs.lunch];
+      if (new Date().getDay() === 2) {
+        if (!list.some(t => t.key === 't5')) {
+          list.push({ key: 't5', label: '💧 漱口' });
+        }
+      }
+      return list;
+    }
+
+    function renderCards() {
+      const row = document.getElementById('studentsRow');
+      if (!row) return;
+      row.innerHTML = '';
+
+      const activeTasks = getActiveTasks();
+      const sysData = currentCloudData[currentSystem] || {};
+      const studentsData = sysData.students || {};
+
+      pikminData.forEach(p => {
+        const studentRecord = studentsData[p.id] || {};
+        const card = document.createElement('div');
+        card.className = `student-card card-${p.id}`;
+
+        let tasksHTML = '';
+        activeTasks.forEach(t => {
+          const timeVal = studentRecord[t.key] || '';
+          const soundType = (t.key === 'arrived' || t.key === 't1') ? 'hi' : ((t.key === 'hw' || t.key === 't2') ? 'kaching' : 'cheer');
+          tasksHTML += `
+            <div class="task-item">
+              <button class="btn-task ${timeVal ? 'completed' : ''}" onclick="toggleTask(${p.id}, '${t.key}', '${soundType}', event)">
+                ${t.label}
+              </button>
+              <div class="time-tag ${timeVal ? 'show' : ''}">${timeVal ? '✓ ' + timeVal : ''}</div>
+            </div>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="seat-badge bg-${p.id}">${p.id} 號</div>
+          <div class="pikmin-name">${p.name}</div>
+          <div class="task-group">${tasksHTML}</div>
+        `;
+        row.appendChild(card);
+      });
+
+      const dutyTime = sysData.dutyTrash || '';
+      const dutyBtn = document.getElementById('dutyBtn');
+      const dutyTimeTag = document.getElementById('dutyTimeTag');
+      if (dutyBtn && dutyTimeTag) {
+        if (dutyTime) {
+          dutyBtn.className = 'btn-duty completed';
+          dutyTimeTag.innerText = '✓ ' + dutyTime;
+        } else {
+          dutyBtn.className = 'btn-duty';
+          dutyTimeTag.innerText = '未完成';
+        }
+      }
+    }
+
+    function toggleTask(studentId, taskKey, soundType, event) {
+      if (!currentCloudData[currentSystem]) currentCloudData[currentSystem] = { students: {} };
+      const students = currentCloudData[currentSystem].students || {};
+      if (!students[studentId]) students[studentId] = {};
+
+      const currentVal = students[studentId][taskKey];
+      const newVal = !currentVal ? getCurrentTimeString() : '';
+
+      if (db) {
+        db.ref(`class_system/${todayKey}/system`).set(currentSystem);
+        db.ref(`class_system/${todayKey}/${currentSystem}/students/${studentId}/${taskKey}`).set(newVal);
+      }
+
+      if (!currentVal) {
+        playSound(soundType);
+        triggerFX(event.clientX, event.clientY);
+      }
+    }
+
+    function toggleDuty(event) {
+      if (!currentCloudData[currentSystem]) currentCloudData[currentSystem] = {};
+      const currentDuty = currentCloudData[currentSystem].dutyTrash || '';
+      const newVal = !currentDuty ? getCurrentTimeString() : '';
+
+      if (db) db.ref(`class_system/${todayKey}/${currentSystem}/dutyTrash`).set(newVal);
+      if (!currentDuty) {
+        playSound('cheer');
+        triggerFX(event.clientX, event.clientY);
+      }
+    }
+
+    function triggerFX(x, y) {
+      const colors = ['#48bb78', '#38b2ac', '#4299e1', '#ed64a6', '#ecc94b'];
+      for (let i = 0; i < 8; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti';
+        p.style.left = (x + (Math.random() * 40 - 20)) + 'px';
+        p.style.top = (y + (Math.random() * 20 - 10)) + 'px';
+        p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 1000);
+      }
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const date = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const mins = String(now.getMinutes()).padStart(2, '0');
+      const secs = String(now.getSeconds()).padStart(2, '0');
+      const days = ['日', '一', '二', '三', '四', '五', '六'];
+
+      const liveClock = document.getElementById('liveClock');
+      if (liveClock) {
+        liveClock.innerText = `📅 ${year}/${month}/${date} (${days[now.getDay()]}) ${hours}:${mins}:${secs}`;
+      }
+    }
+
+    function exportData(range) {
+      if (!db) {
+        alert("資料庫連線尚未建立，無法匯出。");
+        return;
+      }
+      db.ref('class_system').once('value', (snapshot) => {
+        const allData = snapshot.val() || {};
+        let csvContent = "\uFEFF日期,系統模式,小任務開始時間,座號,皮克敏名稱," +
+                         "到校時間(我到了),交作業時間(交作業),小任務完成時間,其他任務4,其他任務5,其他任務6,值日生倒垃圾\n";
+
+        const daysToScan = range === 'week' ? 7 : 30;
+
+        for (let i = daysToScan - 1; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(now.getDate() - i);
+          const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+          const dayData = allData[dateKey];
+
+          if (dayData) {
+            ['morning', 'lunch', 'wednesday'].forEach(sys => {
+              if (dayData[sys]) {
+                const sysName = sys === 'morning' ? '晨間點名' : (sys === 'lunch' ? '飯後工作' : '週三任務');
+                const globalStart = dayData[sys].globalTaskStart || '未記錄';
+                const dutyTime = dayData[sys].dutyTrash || '未完成';
+                const students = dayData[sys].students || {};
+
+                pikminData.forEach(p => {
+                  const rec = students[p.id] || {};
+                  let col1 = '', col2 = '', col3 = '', col4 = '', col5 = '', col6 = '';
+                  
+                  if (sys === 'morning') {
+                    col1 = rec.arrived || '';
+                    col2 = rec.hw || '';
+                    col3 = rec.task || '';
+                  } else if (sys === 'lunch') {
+                    col1 = rec.t1 || ''; col2 = rec.t2 || ''; col3 = rec.t3 || ''; col4 = rec.t4 || ''; col5 = rec.t5 || '';
+                  } else if (sys === 'wednesday') {
+                    col1 = rec.t1 || ''; col2 = rec.t2 || ''; col3 = rec.t3 || ''; col4 = rec.t4 || ''; col5 = rec.t5 || ''; col6 = rec.t6 || '';
+                  }
+
+                  csvContent += `${dateKey},${sysName},${globalStart},${p.id}號,${p.name},` +
+                                `${col1},${col2},${col3},${col4},${col5},${col6},${dutyTime}\n`;
+                });
+              }
+            });
+          }
+        }
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `皮克敏班級任務紀錄_${range === 'week' ? '本週' : '本月'}_${getTodayKey()}.csv`;
+        a.click();
+      });
+    }
+
+    function resetToday() {
+      if (confirm('確定要重置今天的全部紀錄嗎？') && db) {
+        db.ref('class_system/' + todayKey).remove();
+      }
+    }
+  </script>
+</body>
+</html>
