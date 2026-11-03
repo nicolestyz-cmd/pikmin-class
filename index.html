@@ -387,8 +387,8 @@
     </div>
 
     <div class="action-btns">
-      <button class="export-btn" onclick="exportData('week')">📊 匯出本週 (CSV)</button>
-      <button class="export-btn" onclick="exportData('month')">📅 匯出本月 (CSV)</button>
+      <button class="export-btn" onclick="exportData('today')">📊 匯出今日 (CSV)</button>
+      <button class="export-btn" onclick="exportData('all')">📅 匯出全部紀錄 (CSV)</button>
       <button class="reset-btn" onclick="resetToday()">🔄 重置今天</button>
     </div>
   </header>
@@ -466,13 +466,11 @@
 
     if (new Date().getDay() === 3) currentSystem = 'wednesday';
 
-    // 立即初始化渲染畫面（不需等待雲端回應，確保畫面立刻出現）
     updateUIState();
     renderCards();
     updateClock();
     setInterval(updateClock, 1000);
 
-    // 非同步綁定雲端資料庫
     if (db) {
       db.ref('class_system/' + todayKey).on('value', (snapshot) => {
         currentCloudData = snapshot.val() || {};
@@ -492,7 +490,6 @@
       try {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         const now = audioCtx.currentTime;
-
         if (type === 'hi') {
           const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
           osc.type = 'sine'; osc.frequency.setValueAtTime(400, now);
@@ -685,68 +682,16 @@
       }
     }
 
-    function exportData(range) {
-      if (!db) {
-        alert("資料庫連線尚未建立，無法匯出。");
-        return;
-      }
-      db.ref('class_system').once('value', (snapshot) => {
-        const allData = snapshot.val() || {};
-        let csvContent = "\uFEFF日期,系統模式,小任務開始時間,座號,皮克敏名稱," +
-                         "到校時間(我到了),交作業時間(交作業),小任務完成時間,其他任務4,其他任務5,其他任務6,值日生倒垃圾\n";
+    // 💡 點擊按鈕直接「秒速匯出」當前畫面的即時資料
+    function exportData(type) {
+      let csvContent = "\uFEFF日期,系統模式,小任務開始時間,座號,皮克敏名稱," +
+                       "到校時間(我到了),交作業時間(交作業),小任務完成時間,其他任務4,其他任務5,其他任務6,值日生倒垃圾\n";
 
-        const daysToScan = range === 'week' ? 7 : 30;
+      const sysName = currentSystem === 'morning' ? '晨間點名' : (currentSystem === 'lunch' ? '飯後工作' : '週三任務');
+      const globalStart = (currentCloudData.morning && currentCloudData.morning.globalTaskStart) || '未記錄';
+      const dutyTime = (currentCloudData[currentSystem] && currentCloudData[currentSystem].dutyTrash) || '未完成';
+      const studentsData = (currentCloudData[currentSystem] && currentCloudData[currentSystem].students) || {};
 
-        for (let i = daysToScan - 1; i >= 0; i--) {
-          const d = new Date();
-          d.setDate(now.getDate() - i);
-          const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-          const dayData = allData[dateKey];
-
-          if (dayData) {
-            ['morning', 'lunch', 'wednesday'].forEach(sys => {
-              if (dayData[sys]) {
-                const sysName = sys === 'morning' ? '晨間點名' : (sys === 'lunch' ? '飯後工作' : '週三任務');
-                const globalStart = dayData[sys].globalTaskStart || '未記錄';
-                const dutyTime = dayData[sys].dutyTrash || '未完成';
-                const students = dayData[sys].students || {};
-
-                pikminData.forEach(p => {
-                  const rec = students[p.id] || {};
-                  let col1 = '', col2 = '', col3 = '', col4 = '', col5 = '', col6 = '';
-                  
-                  if (sys === 'morning') {
-                    col1 = rec.arrived || '';
-                    col2 = rec.hw || '';
-                    col3 = rec.task || '';
-                  } else if (sys === 'lunch') {
-                    col1 = rec.t1 || ''; col2 = rec.t2 || ''; col3 = rec.t3 || ''; col4 = rec.t4 || ''; col5 = rec.t5 || '';
-                  } else if (sys === 'wednesday') {
-                    col1 = rec.t1 || ''; col2 = rec.t2 || ''; col3 = rec.t3 || ''; col4 = rec.t4 || ''; col5 = rec.t5 || ''; col6 = rec.t6 || '';
-                  }
-
-                  csvContent += `${dateKey},${sysName},${globalStart},${p.id}號,${p.name},` +
-                                `${col1},${col2},${col3},${col4},${col5},${col6},${dutyTime}\n`;
-                });
-              }
-            });
-          }
-        }
-
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `皮克敏班級任務紀錄_${range === 'week' ? '本週' : '本月'}_${getTodayKey()}.csv`;
-        a.click();
-      });
-    }
-
-    function resetToday() {
-      if (confirm('確定要重置今天的全部紀錄嗎？') && db) {
-        db.ref('class_system/' + todayKey).remove();
-      }
-    }
-  </script>
-</body>
-</html>
+      pikminData.forEach(p => {
+        const rec = studentsData[p.id] || {};
+        let col
