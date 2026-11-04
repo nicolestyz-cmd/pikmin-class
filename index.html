@@ -128,18 +128,18 @@
     .action-btns { display: flex; gap: 10px; flex-wrap: wrap; }
 
     .export-btn {
-      background: #38a169;
+      background: #e53e3e;
       color: white;
-      border: 2.5px solid #276749;
+      border: 2.5px solid #9b2c2c;
       padding: 10px 18px;
       border-radius: 16px;
       font-size: 1rem;
       font-weight: 900;
       cursor: pointer;
-      box-shadow: 0 3px 10px rgba(56, 161, 105, 0.2);
+      box-shadow: 0 3px 10px rgba(229, 62, 62, 0.2);
       transition: all 0.2s;
     }
-    .export-btn:hover { background: #2f855a; transform: translateY(-2px); }
+    .export-btn:hover { background: #c53030; transform: translateY(-2px); }
 
     .reset-btn {
       background: #edf2f7;
@@ -303,11 +303,39 @@
       animation: floatUp 1s ease-out forwards; z-index: 99;
     }
     @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-80px); } }
+
+    #pdfRenderArea {
+      display: none;
+      background: white;
+      padding: 20px;
+      font-family: '芫荽', sans-serif;
+    }
+    .pdf-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      margin-bottom: 30px;
+      font-size: 11px;
+    }
+    .pdf-table th, .pdf-table td {
+      border: 1px solid #cbd5e0;
+      padding: 6px 4px;
+      text-align: center;
+    }
+    .pdf-table th {
+      background-color: #2d6a4f;
+      color: white;
+      font-size: 12px;
+    }
+    .pdf-day-end { border-bottom: 3px solid #1b4332 !important; }
+    .status-punctual { background-color: #d8f3dc; color: #1b4332; font-weight: bold; }
+    .status-late { background-color: #ffccd5; color: #800f2f; font-weight: bold; }
+    .status-leave { background-color: #e2e2e2; color: #495057; font-weight: bold; }
   </style>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body class="mode-morning">
 
@@ -325,8 +353,8 @@
     </div>
 
     <div class="action-btns">
-      <button class="export-btn" onclick="exportExcel('week')">📊 匯出本週 (Excel)</button>
-      <button class="export-btn" onclick="exportExcel('month')">📅 匯出本月 (Excel)</button>
+      <button class="export-btn" onclick="exportPDF('week')">📄 匯出本週 (PDF)</button>
+      <button class="export-btn" onclick="exportPDF('month')">📄 匯出本月 (PDF)</button>
       <button class="reset-btn" onclick="resetToday()">🔄 重置今天</button>
     </div>
   </header>
@@ -350,6 +378,8 @@
     <div class="pikmin-sprite"><span class="flower-stem">🍃</span>🪨</div>
     <div class="pikmin-sprite"><span class="flower-stem">❄️</span>🧊</div>
   </div>
+
+  <div id="pdfRenderArea"></div>
 
   <script>
     const firebaseConfig = { databaseURL: "https://morning-check-356db-default-rtdb.firebaseio.com/" };
@@ -398,68 +428,83 @@
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    // 🎵 專屬豐富音效系統
+    // 🎵 全新升級：高區辨度、各具特色的專屬音效引擎
     function playSound(type) {
       try {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         const now = audioCtx.currentTime;
 
-        if (type === 'arrived') { // 輕快上揚
+        if (type === 'leave') { 
+          // 📋 請假專屬：沉穩、安靜、短促的單一低音（木魚感）
           const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
-          osc.type = 'sine'; osc.frequency.setValueAtTime(440, now); osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
-          g.gain.setValueAtTime(0.25, now); g.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+          osc.type = 'sine'; osc.frequency.setValueAtTime(220, now);
+          g.gain.setValueAtTime(0.15, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+          osc.connect(g); g.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.12);
+        } else if (type === 'arrived') { 
+          // ✋ 我到了：清脆響亮的單音金屬鐘聲
+          const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+          osc.type = 'sine'; osc.frequency.setValueAtTime(587.33, now); osc.frequency.exponentialRampToValueAtTime(1174.66, now + 0.1);
+          g.gain.setValueAtTime(0.2, now); g.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
           osc.connect(g); g.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.2);
-        } else if (type === 'hw') { // 金幣雙音階
-          [523.25, 783.99].forEach((f, i) => {
+        } else if (type === 'hw') { 
+          // 📖 交作業：紮實雙音階木琴打擊
+          [440, 659.25].forEach((f, i) => {
             const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
             osc.type = 'triangle'; osc.frequency.setValueAtTime(f, now + i * 0.08);
-            g.gain.setValueAtTime(0.3, now + i * 0.08); g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.08 + 0.2);
-            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + i * 0.08); osc.stop(now + i * 0.08 + 0.2);
+            g.gain.setValueAtTime(0.25, now + i * 0.08); g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.08 + 0.15);
+            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + i * 0.08); osc.stop(now + i * 0.08 + 0.15);
           });
-        } else if (type === 'task') { // 三和弦跳躍
-          [659.25, 830.61, 987.77].forEach((f, i) => {
+        } else if (type === 'task') { 
+          // ✍️ 小任務：活潑跳躍的三和弦
+          [523.25, 659.25, 783.99].forEach((f, i) => {
             const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
             osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + i * 0.06);
-            g.gain.setValueAtTime(0.2, now + i * 0.06); g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.06 + 0.18);
-            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + i * 0.06); osc.stop(now + i * 0.06 + 0.18);
+            g.gain.setValueAtTime(0.2, now + i * 0.06); g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.06 + 0.15);
+            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + i * 0.06); osc.stop(now + i * 0.06 + 0.15);
           });
-        } else if (type === 'chair') { // 木質低音
+        } else if (type === 'chair') { 
+          // 🪑 抬椅子：低沈厚實的鋸齒波木質搬動音
           const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
-          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(180, now); osc.frequency.linearRampToValueAtTime(120, now + 0.2);
+          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(130.81, now); osc.frequency.linearRampToValueAtTime(98.00, now + 0.22);
           g.gain.setValueAtTime(0.2, now); g.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
           osc.connect(g); g.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.22);
-        } else if (type === 'brush') { // 泡沫高頻跳音
-          [1200, 1500, 1800].forEach((f, i) => {
+        } else if (type === 'brush') { 
+          // 🪥 刷牙：高頻細碎泡泡音
+          [1046.50, 1318.51, 1567.98, 2093.00].forEach((f, i) => {
             const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
-            osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + i * 0.04);
-            g.gain.setValueAtTime(0.15, now + i * 0.04); g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.04 + 0.1);
-            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + i * 0.04); osc.stop(now + i * 0.04 + 0.1);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + i * 0.03);
+            g.gain.setValueAtTime(0.12, now + i * 0.03); g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.03 + 0.08);
+            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + i * 0.03); osc.stop(now + i * 0.03 + 0.08);
           });
-        } else if (type === 'clean') { // 刷刷暢快音階
-          [400, 600, 800, 1000].forEach((f, i) => {
+        } else if (type === 'clean') { 
+          // 🧹 打掃：流暢的掃動音階
+          [349.23, 440, 523.25, 698.46].forEach((f, i) => {
             const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
             osc.type = 'triangle'; osc.frequency.setValueAtTime(f, now + i * 0.05);
-            g.gain.setValueAtTime(0.2, now + i * 0.05); g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.05 + 0.15);
-            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + i * 0.05); osc.stop(now + i * 0.05 + 0.15);
+            g.gain.setValueAtTime(0.18, now + i * 0.05); g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.05 + 0.12);
+            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + i * 0.05); osc.stop(now + i * 0.05 + 0.12);
           });
-        } else if (type === 'toilet') { // 水滴聲
+        } else if (type === 'toilet') { 
+          // 🚻 上廁所：高到低清脆水滴
           const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
-          osc.type = 'sine'; osc.frequency.setValueAtTime(900, now); osc.frequency.exponentialRampToValueAtTime(400, now + 0.2);
-          g.gain.setValueAtTime(0.25, now); g.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-          osc.connect(g); g.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.2);
-        } else if (type === 'gargle') { // 清涼水流旋律
-          [600, 900, 750, 1100].forEach((f, i) => {
+          osc.type = 'sine'; osc.frequency.setValueAtTime(1200, now); osc.frequency.exponentialRampToValueAtTime(300, now + 0.18);
+          g.gain.setValueAtTime(0.2, now); g.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+          osc.connect(g); g.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.18);
+        } else if (type === 'gargle') { 
+          // 💧 漱口：清涼水流起伏
+          [587.33, 880, 783.99, 1046.50].forEach((f, i) => {
             const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
-            osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + i * 0.05);
-            g.gain.setValueAtTime(0.18, now + i * 0.05); g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.05 + 0.15);
-            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + i * 0.05); osc.stop(now + i * 0.05 + 0.15);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + i * 0.04);
+            g.gain.setValueAtTime(0.15, now + i * 0.04); g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.04 + 0.12);
+            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + i * 0.04); osc.stop(now + i * 0.04 + 0.12);
           });
-        } else if (type === 'cheer') { // 預設歡呼和弦
+        } else if (type === 'cheer') { 
+          // 預設完成音階
           [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
             const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
-            osc.type = 'sine'; osc.frequency.setValueAtTime(freq, now + idx * 0.06);
-            g.gain.setValueAtTime(0.2, now + idx * 0.06); g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.06 + 0.2);
-            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + idx * 0.06); osc.stop(now + idx * 0.06 + 0.2);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(freq, now + idx * 0.05);
+            g.gain.setValueAtTime(0.2, now + idx * 0.05); g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.05 + 0.18);
+            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + idx * 0.05); osc.stop(now + idx * 0.05 + 0.18);
           });
         }
       } catch (e) { console.warn("音效播放失敗", e); }
@@ -580,7 +625,7 @@
       if (!currentCloudData[currentSystem]) currentCloudData[currentSystem] = { students: {} };
       const students = currentCloudData[currentSystem].students || {};
       if (!students[studentId]) students[studentId] = {};
-      if (students[studentId].leave) return; // 請假中無法點選
+      if (students[studentId].leave) return;
 
       const currentVal = students[studentId][taskKey];
       const newVal = !currentVal ? getCurrentTimeString() : '';
@@ -608,7 +653,8 @@
         db.ref(`class_system/${todayKey}/system`).set(currentSystem);
         db.ref(`class_system/${todayKey}/${currentSystem}/students/${studentId}/leave`).set(newLeave);
       }
-      playSound('cheer');
+      // 📋 請假專屬：使用短促沉穩的單音
+      playSound('leave');
     }
 
     function toggleDuty(event) {
@@ -645,8 +691,7 @@
       }
     }
 
-    // 📊 完整專業 Excel 匯出功能（支援芫荽字型、置中、各學生獨立分頁、換日粗線、請假處理）
-    function exportExcel(range) {
+    function exportPDF(range) {
       if (!db) { alert("資料庫連線尚未建立。"); return; }
 
       db.ref('class_system').once('value', (snapshot) => {
@@ -689,7 +734,7 @@
                     }
                     records.push({
                       "日期": dateKey, "系統模式": sysName, "座號": `${p.id}號`, "皮克敏名稱": p.name,
-                      "到校時間": arr, "準時/遲到": status, "交作業": rec.hw || '', "交作業時間": "", 
+                      "到校時間": arr, "準時/遲到": status, "交作業": rec.hw || '', "交作業時間": "",
                       "小任務開始": dayData.morning.globalTaskStart || '', "小任務完成": rec.task || (arr ? "未執行" : ""), "解任務時間": "", "pid": p.id
                     });
                   } else {
@@ -710,31 +755,55 @@
           return;
         }
 
-        // 建立 Excel 活頁簿
-        const wb = XLSX.utils.book_new();
-        const headers = ["日期", "系統模式", "座號", "皮克敏名稱", "到校時間", "準時/遲到", "交作業", "交作業時間", "小任務開始", "小任務完成", "解任務時間"];
+        const renderContainer = document.getElementById('pdfRenderArea');
+        renderContainer.style.display = 'block';
+        renderContainer.innerHTML = '';
 
-        // 轉換全班資料
-        let allSheetData = [headers];
-        records.forEach(r => {
-          allSheetData.push([r["日期"], r["系統模式"], r["座號"], r["皮克敏名稱"], r["到校時間"], r["準時/遲到"], r["交作業"], r["交作業時間"], r["小任務開始"], r["小任務完成"], r["解任務時間"]]);
+        let html = `<h2 style="text-align: center; color: #2d6a4f; margin-bottom: 12px; font-size: 20px;">🌱 皮克敏班級任務紀錄 - 全班總表 (${range === 'week' ? '本週' : '本月'})</h2>`;
+        html += `<table class="pdf-table"><thead><tr><th>日期</th><th>系統模式</th><th>座號</th><th>皮克敏名稱</th><th>到校時間</th><th>準時/遲到</th><th>交作業</th><th>交作業時間</th><th>小任務開始</th><th>小任務完成</th><th>解任務時間</th></tr></thead><tbody>`;
+
+        records.forEach((r, idx) => {
+          const isDayEnd = (idx === records.length - 1) || (records[idx]['日期'] !== records[idx + 1]['日期']);
+          const statusClass = r['準時/遲到'] === '準時' ? 'status-punctual' : (r['準時/遲到'] === '遲到' ? 'status-late' : (r['準時/遲到'] === '請假' ? 'status-leave' : ''));
+          
+          html += `<tr class="${isDayEnd ? 'pdf-day-end' : ''}">
+            <td>${r['日期']}</td><td>${r['系統模式']}</td><td>${r['座號']}</td><td>${r['皮克敏名稱']}</td>
+            <td>${r['到校時間']}</td><td class="${statusClass}">${r['準時/遲到']}</td><td>${r['交作業']}</td><td>${r['交作業時間']}</td>
+            <td>${r['小任務開始']}</td><td>${r['小任務完成']}</td><td>${r['解任務時間']}</td>
+          </tr>`;
         });
-        const ws_all = XLSX.utils.aoa_to_sheet(allSheetData);
-        XLSX.utils.book_append_sheet(wb, ws_all, "全班總表");
+        html += `</tbody></table>`;
 
-        // 轉換各學生分頁
         pikminData.forEach(p => {
-          let studentRows = records.filter(r => r.pid === p.id);
-          let studentSheetData = [headers];
-          studentRows.forEach(r => {
-            studentSheetData.push([r["日期"], r["系統模式"], r["座號"], r["皮克敏名稱"], r["到校時間"], r["準時/遲到"], r["交作業"], r["交作業時間"], r["小任務開始"], r["小任務完成"], r["解任務時間"]]);
+          const studentRows = records.filter(r => r.pid === p.id);
+          html += `<div style="page-break-before: always;"></div>`;
+          html += `<h2 style="text-align: center; color: #2d6a4f; margin-bottom: 12px; font-size: 20px;">⭐ 皮克敏班級任務紀錄 - ${p.id}號 ${p.name} 個人專屬報表</h2>`;
+          html += `<table class="pdf-table"><thead><tr><th>日期</th><th>系統模式</th><th>座號</th><th>皮克敏名稱</th><th>到校時間</th><th>準時/遲到</th><th>交作業</th><th>交作業時間</th><th>小任務開始</th><th>小任務完成</th><th>解任務時間</th></tr></thead><tbody>`;
+
+          studentRows.forEach((r) => {
+            const statusClass = r['準時/遲到'] === '準時' ? 'status-punctual' : (r['準時/遲到'] === '遲到' ? 'status-late' : (r['準時/遲到'] === '請假' ? 'status-leave' : ''));
+            html += `<tr>
+              <td>${r['日期']}</td><td>${r['系統模式']}</td><td>${r['座號']}</td><td>${r['皮克敏名稱']}</td>
+              <td>${r['到校時間']}</td><td class="${statusClass}">${r['準時/遲ado']}</td><td>${r['交作業']}</td><td>${r['交作業時間']}</td>
+              <td>${r['小任務開始']}</td><td>${r['小任務完成']}</td><td>${r['解任務時間']}</td>
+            </tr>`;
           });
-          const ws_student = XLSX.utils.aoa_to_sheet(studentSheetData);
-          XLSX.utils.book_append_sheet(wb, ws_student, `${p.id}號-${p.name.split(' ')[1]}`);
+          html += `</tbody></table>`;
         });
 
-        // 下載檔案
-        XLSX.writeFile(wb, `皮克敏班級任務紀錄_${range === 'week' ? '本週' : '本月'}_${todayKey}.xlsx`);
+        renderContainer.innerHTML = html;
+
+        const opt = {
+          margin:       [10, 8, 10, 8],
+          filename:     `皮克敏班級任務紀錄_${range === 'week' ? '本週' : '本月'}_${todayKey}.pdf`,
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2, useCORS: true },
+          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        };
+
+        html2pdf().set(opt).from(renderContainer).save().then(() => {
+          renderContainer.style.display = 'none';
+        });
       });
     }
 
