@@ -469,8 +469,10 @@
     }
 
     function getTodayKey() {
-      const today = new Date();
-      return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      const now = new Date();
+      // 強制加上台灣時區偏移量 (8小時)，確保日期不因伺服器時區跑掉
+      const taiwanTime = new Date(now.getTime() + (8 * 60 * 60 * 1000) + (now.getTimezoneOffset() * 60 * 1000));
+      return `${taiwanTime.getFullYear()}-${String(taiwanTime.getMonth() + 1).padStart(2, '0')}-${String(taiwanTime.getDate()).padStart(2, '0')}`;
     }
 
     function getCurrentTimeString() {
