@@ -3,8 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>皮克敏班級日常任務整合系統</title>
+  <title>皮克敏班級任務整合系統</title>
   <style>
+    @font-face {
+      font-family: '芫荽';
+      src: url('https://cdn.jsdelivr.net/gh/fonfont/芫荽/芫荽.ttf') format('truetype');
+    }
+
     :root {
       --morandi-green: #e2ebd9;
       --morandi-yellow: #f7f0e6;
@@ -25,7 +30,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      font-family: '芫荽', 'Microsoft JhengHei', sans-serif;
     }
 
     body {
@@ -58,10 +63,7 @@
       border: 3px solid #ffffff;
     }
 
-    .nav-tabs {
-      display: flex;
-      gap: 12px;
-    }
+    .nav-tabs { display: flex; gap: 12px; }
 
     .tab-btn {
       background: #edf2f7;
@@ -73,14 +75,9 @@
       font-weight: 800;
       cursor: pointer;
       transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
     }
 
-    .tab-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-    }
-
+    .tab-btn:hover { transform: translateY(-3px); }
     .tab-btn.active {
       background: #38a169;
       color: white;
@@ -88,25 +85,10 @@
       box-shadow: 0 6px 18px rgba(56, 161, 105, 0.4);
       transform: scale(1.06);
     }
+    body.mode-lunch .tab-btn.active { background: #dd6b20; border-color: #9c4221; box-shadow: 0 6px 18px rgba(221, 107, 32, 0.4); }
+    body.mode-wednesday .tab-btn.active { background: #3182ce; border-color: #2b6cb0; box-shadow: 0 6px 18px rgba(49, 130, 206, 0.4); }
 
-    body.mode-lunch .tab-btn.active {
-      background: #dd6b20;
-      border-color: #9c4221;
-      box-shadow: 0 6px 18px rgba(221, 107, 32, 0.4);
-    }
-
-    body.mode-wednesday .tab-btn.active {
-      background: #3182ce;
-      border-color: #2b6cb0;
-      box-shadow: 0 6px 18px rgba(49, 130, 206, 0.4);
-    }
-
-    .header-center {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
+    .header-center { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 
     .date-time-box {
       background: #ffffff;
@@ -131,11 +113,7 @@
       box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3);
       transition: all 0.2s;
     }
-
-    .task-start-btn:hover {
-      transform: scale(1.05);
-      background: #2b6cb0;
-    }
+    .task-start-btn:hover { transform: scale(1.05); background: #2b6cb0; }
 
     .task-start-time {
       font-size: 1.05rem;
@@ -145,13 +123,9 @@
       padding: 10px 18px;
       border-radius: 18px;
       border: 2.5px solid #bee3f8;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.03);
     }
 
-    .action-btns {
-      display: flex;
-      gap: 10px;
-    }
+    .action-btns { display: flex; gap: 10px; flex-wrap: wrap; }
 
     .export-btn {
       background: #38a169;
@@ -165,7 +139,6 @@
       box-shadow: 0 3px 10px rgba(56, 161, 105, 0.2);
       transition: all 0.2s;
     }
-
     .export-btn:hover { background: #2f855a; transform: translateY(-2px); }
 
     .reset-btn {
@@ -201,6 +174,34 @@
       flex-direction: column;
       align-items: center;
       border-top: 8px solid #ccc;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .student-card.on-leave {
+      opacity: 0.55;
+      background: #f1f3f5;
+    }
+
+    .leave-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #f8f9fa;
+      border: 1.5px solid #ced4da;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: #495057;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .leave-btn:hover { background: #e9ecef; }
+    .student-card.on-leave .leave-btn {
+      background: #495057;
+      color: white;
+      border-color: #343a40;
     }
 
     .card-1 { border-color: var(--p-red); }
@@ -220,7 +221,6 @@
       border-radius: 14px;
       margin-bottom: 6px;
     }
-
     .bg-1 { background: var(--p-red); }
     .bg-2 { background: var(--p-yellow); color: #333; }
     .bg-3 { background: var(--p-blue); }
@@ -238,19 +238,8 @@
       text-align: center;
     }
 
-    .task-group {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      width: 100%;
-    }
-
-    .task-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-    }
+    .task-group { display: flex; flex-direction: column; gap: 14px; width: 100%; }
+    .task-item { display: flex; flex-direction: column; align-items: center; width: 100%; }
 
     .btn-task {
       width: 100%;
@@ -267,22 +256,17 @@
       justify-content: center;
       gap: 4px;
     }
-
-    .btn-task.completed {
-      background: #f0fff4;
-      border-color: #48bb78;
-      color: #276749;
-    }
+    .btn-task.completed { background: #f0fff4; border-color: #48bb78; color: #276749; }
+    .student-card.on-leave .btn-task { pointer-events: none; background: #e9ecef; color: #adb5bd; }
 
     .time-tag {
       font-size: 0.82rem;
       color: #276749;
       font-weight: 800;
-      margin-top: 8px;
+      margin-top: 6px;
       height: 18px;
       visibility: hidden;
     }
-
     .time-tag.show { visibility: visible; }
 
     .duty-bar {
@@ -295,81 +279,35 @@
       align-items: center;
       margin-top: 14px;
     }
-
-    .duty-container {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      width: 100%;
-      max-width: 520px;
-    }
-
+    .duty-container { display: flex; align-items: center; gap: 18px; width: 100%; max-width: 520px; }
     .btn-duty {
-      flex: 1;
-      padding: 12px;
-      border-radius: 16px;
-      border: 2.5px solid #f6ad55;
-      background: #fffaf0;
-      color: #7b341e;
-      font-size: 1.1rem;
-      font-weight: bold;
-      cursor: pointer;
+      flex: 1; padding: 12px; border-radius: 16px; border: 2.5px solid #f6ad55;
+      background: #fffaf0; color: #7b341e; font-size: 1.1rem; font-weight: bold; cursor: pointer;
     }
-
-    .btn-duty.completed {
-      background: #f0fff4;
-      border-color: #48bb78;
-      color: #276749;
-    }
-
-    .duty-time {
-      font-size: 1rem;
-      color: #276749;
-      font-weight: 800;
-    }
+    .btn-duty.completed { background: #f0fff4; border-color: #48bb78; color: #276749; }
+    .duty-time { font-size: 1rem; color: #276749; font-weight: 800; }
 
     .pikmin-garden {
-      display: flex;
-      justify-content: space-around;
-      align-items: flex-end;
-      padding: 10px 30px 0 30px;
-      margin-top: auto;
-      pointer-events: none;
+      display: flex; justify-content: space-around; align-items: flex-end;
+      padding: 10px 30px 0 30px; margin-top: auto; pointer-events: none;
     }
-
     .pikmin-sprite {
-      font-size: 2.2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      font-size: 2.2rem; display: flex; flex-direction: column; align-items: center;
       animation: sway 3s ease-in-out infinite alternate;
     }
-
     .flower-stem { font-size: 1.2rem; margin-bottom: -8px; }
-
-    @keyframes sway {
-      0% { transform: rotate(-5deg); }
-      100% { transform: rotate(5deg); }
-    }
+    @keyframes sway { 0% { transform: rotate(-5deg); } 100% { transform: rotate(5deg); } }
 
     .confetti {
-      position: fixed;
-      pointer-events: none;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      animation: floatUp 1s ease-out forwards;
-      z-index: 99;
+      position: fixed; pointer-events: none; width: 10px; height: 10px; border-radius: 50%;
+      animation: floatUp 1s ease-out forwards; z-index: 99;
     }
-
-    @keyframes floatUp {
-      0% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-80px); }
-    }
+    @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-80px); } }
   </style>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body class="mode-morning">
 
@@ -387,8 +325,8 @@
     </div>
 
     <div class="action-btns">
-      <button class="export-btn" onclick="exportData('week')">📊 匯出本週 (CSV)</button>
-      <button class="export-btn" onclick="exportData('month')">📅 匯出本月 (CSV)</button>
+      <button class="export-btn" onclick="exportExcel('week')">📊 匯出本週 (Excel)</button>
+      <button class="export-btn" onclick="exportExcel('month')">📅 匯出本月 (Excel)</button>
       <button class="reset-btn" onclick="resetToday()">🔄 重置今天</button>
     </div>
   </header>
@@ -414,27 +352,15 @@
   </div>
 
   <script>
-    const firebaseConfig = {
-      databaseURL: "https://morning-check-356db-default-rtdb.firebaseio.com/"
-    };
-
+    const firebaseConfig = { databaseURL: "https://morning-check-356db-default-rtdb.firebaseio.com/" };
     let db = null;
-    try {
-      firebase.initializeApp(firebaseConfig);
-      db = firebase.database();
-    } catch (e) {
-      console.warn("Firebase 初始化跳過：", e);
-    }
+    try { firebase.initializeApp(firebaseConfig); db = firebase.database(); } catch (e) { console.warn("Firebase 初始化跳過：", e); }
 
     const pikminData = [
-      { id: 1, name: "🔴 紅色皮克敏" },
-      { id: 2, name: "🟡 黃色皮克敏" },
-      { id: 3, name: "🔵 藍色皮克敏" },
-      { id: 4, name: "🟣 紫色皮克敏" },
-      { id: 5, name: "⚪ 白色皮克敏" },
-      { id: 6, name: "🌸 羽翼皮克敏" },
-      { id: 7, name: "🪨 岩石皮克敏" },
-      { id: 8, name: "🧊 冰霜皮克敏" }
+      { id: 1, name: "🔴 紅色皮克敏" }, { id: 2, name: "🟡 黃色皮克敏" },
+      { id: 3, name: "🔵 藍色皮克敏" }, { id: 4, name: "🟣 紫色皮克敏" },
+      { id: 5, name: "⚪ 白色皮克敏" }, { id: 6, name: "🌸 羽翼皮克敏" },
+      { id: 7, name: "🪨 岩石皮克敏" }, { id: 8, name: "🧊 冰霜皮克敏" }
     ];
 
     const taskConfigs = {
@@ -444,74 +370,96 @@
         { key: 'task', label: '✍️ 小任務' }
       ],
       lunch: [
-        { key: 't1', label: '🪑 抬椅子' },
-        { key: 't2', label: '🪥 刷牙' },
-        { key: 't3', label: '🧹 打掃' },
-        { key: 't4', label: '🚻 上廁所' },
-        { key: 't5', label: '💧 漱口' }
+        { key: 't1', label: '🪑 抬椅子' }, { key: 't2', label: '🪥 刷牙' },
+        { key: 't3', label: '🧹 打掃' }, { key: 't4', label: '🚻 上廁所' }, { key: 't5', label: '💧 漱口' }
       ],
       wednesday: [
-        { key: 't1', label: '🪥 刷牙' },
-        { key: 't2', label: '🗄️ 整理抽屜' },
-        { key: 't3', label: '🪑 整理椅子下方' },
-        { key: 't4', label: '📚 整理書本' },
-        { key: 't5', label: '🚪 整理櫃子' },
-        { key: 't6', label: '📝 抄聯絡簿' }
+        { key: 't1', label: '🪥 刷牙' }, { key: 't2', label: '🗄️ 整理抽屜' },
+        { key: 't3', label: '🪑 整理椅子' }, { key: 't4', label: '📚 整理書本' },
+        { key: 't5', label: '🚪 整理櫃子' }, { key: 't6', label: '📝 抄聯絡簿' }
       ]
     };
 
     let currentSystem = 'morning';
     let currentCloudData = {};
     const todayKey = getTodayKey();
-
     if (new Date().getDay() === 3) currentSystem = 'wednesday';
 
-    updateUIState();
-    renderCards();
-    updateClock();
+    updateUIState(); renderCards(); updateClock();
     setInterval(updateClock, 1000);
 
     if (db) {
       db.ref('class_system/' + todayKey).on('value', (snapshot) => {
         currentCloudData = snapshot.val() || {};
-        if (currentCloudData.system) {
-          currentSystem = currentCloudData.system;
-        }
-        updateUIState();
-        renderCards();
-      }, (error) => {
-        console.error("雲端同步發生錯誤：", error);
+        if (currentCloudData.system) currentSystem = currentCloudData.system;
+        updateUIState(); renderCards();
       });
     }
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
+    // 🎵 專屬豐富音效系統
     function playSound(type) {
       try {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         const now = audioCtx.currentTime;
-        if (type === 'hi') {
-          const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-          osc.type = 'sine'; osc.frequency.setValueAtTime(400, now);
-          osc.frequency.exponentialRampToValueAtTime(750, now + 0.18);
-          gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-          osc.connect(gain); gain.connect(audioCtx.destination);
-          osc.start(now); osc.stop(now + 0.2);
-        } else if (type === 'kaching') {
-          const osc1 = audioCtx.createOscillator(), osc2 = audioCtx.createOscillator(), gain = audioCtx.createGain();
-          osc1.type = 'triangle'; osc2.type = 'sine';
-          osc1.frequency.setValueAtTime(1200, now); osc1.frequency.setValueAtTime(2400, now + 0.04);
-          osc2.frequency.setValueAtTime(1600, now); osc2.frequency.setValueAtTime(3200, now + 0.04);
-          gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-          osc1.connect(gain); osc2.connect(gain); gain.connect(audioCtx.destination);
-          osc1.start(now); osc2.start(now); osc1.stop(now + 0.35); osc2.stop(now + 0.35);
-        } else if (type === 'cheer') {
+
+        if (type === 'arrived') { // 輕快上揚
+          const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+          osc.type = 'sine'; osc.frequency.setValueAtTime(440, now); osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
+          g.gain.setValueAtTime(0.25, now); g.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+          osc.connect(g); g.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.2);
+        } else if (type === 'hw') { // 金幣雙音階
+          [523.25, 783.99].forEach((f, i) => {
+            const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(f, now + i * 0.08);
+            g.gain.setValueAtTime(0.3, now + i * 0.08); g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.08 + 0.2);
+            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + i * 0.08); osc.stop(now + i * 0.08 + 0.2);
+          });
+        } else if (type === 'task') { // 三和弦跳躍
+          [659.25, 830.61, 987.77].forEach((f, i) => {
+            const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + i * 0.06);
+            g.gain.setValueAtTime(0.2, now + i * 0.06); g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.06 + 0.18);
+            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + i * 0.06); osc.stop(now + i * 0.06 + 0.18);
+          });
+        } else if (type === 'chair') { // 木質低音
+          const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(180, now); osc.frequency.linearRampToValueAtTime(120, now + 0.2);
+          g.gain.setValueAtTime(0.2, now); g.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+          osc.connect(g); g.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.22);
+        } else if (type === 'brush') { // 泡沫高頻跳音
+          [1200, 1500, 1800].forEach((f, i) => {
+            const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + i * 0.04);
+            g.gain.setValueAtTime(0.15, now + i * 0.04); g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.04 + 0.1);
+            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + i * 0.04); osc.stop(now + i * 0.04 + 0.1);
+          });
+        } else if (type === 'clean') { // 刷刷暢快音階
+          [400, 600, 800, 1000].forEach((f, i) => {
+            const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(f, now + i * 0.05);
+            g.gain.setValueAtTime(0.2, now + i * 0.05); g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.05 + 0.15);
+            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + i * 0.05); osc.stop(now + i * 0.05 + 0.15);
+          });
+        } else if (type === 'toilet') { // 水滴聲
+          const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+          osc.type = 'sine'; osc.frequency.setValueAtTime(900, now); osc.frequency.exponentialRampToValueAtTime(400, now + 0.2);
+          g.gain.setValueAtTime(0.25, now); g.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+          osc.connect(g); g.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.2);
+        } else if (type === 'gargle') { // 清涼水流旋律
+          [600, 900, 750, 1100].forEach((f, i) => {
+            const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + i * 0.05);
+            g.gain.setValueAtTime(0.18, now + i * 0.05); g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.05 + 0.15);
+            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + i * 0.05); osc.stop(now + i * 0.05 + 0.15);
+          });
+        } else if (type === 'cheer') { // 預設歡呼和弦
           [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
-            const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+            const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
             osc.type = 'sine'; osc.frequency.setValueAtTime(freq, now + idx * 0.06);
-            gain.gain.setValueAtTime(0.2, now + idx * 0.06); gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.06 + 0.2);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(now + idx * 0.06); osc.stop(now + idx * 0.06 + 0.2);
+            g.gain.setValueAtTime(0.2, now + idx * 0.06); g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.06 + 0.2);
+            osc.connect(g); g.connect(audioCtx.destination); osc.start(now + idx * 0.06); osc.stop(now + idx * 0.06 + 0.2);
           });
         }
       } catch (e) { console.warn("音效播放失敗", e); }
@@ -530,14 +478,13 @@
     function startGlobalTask() {
       const timeStr = getCurrentTimeString();
       if (db) db.ref(`class_system/${todayKey}/morning/globalTaskStart`).set(timeStr);
-      playSound('hi');
+      playSound('arrived');
     }
 
     function switchSystem(sys) {
       currentSystem = sys;
       if (db) db.ref(`class_system/${todayKey}/system`).set(sys);
-      updateUIState();
-      renderCards();
+      updateUIState(); renderCards();
     }
 
     function updateUIState() {
@@ -564,10 +511,8 @@
       if (currentSystem === 'morning') return taskConfigs.morning;
       if (currentSystem === 'wednesday') return taskConfigs.wednesday;
       let list = [...taskConfigs.lunch];
-      if (new Date().getDay() === 2) {
-        if (!list.some(t => t.key === 't5')) {
-          list.push({ key: 't5', label: '💧 漱口' });
-        }
+      if (new Date().getDay() === 2 && !list.some(t => t.key === 't5')) {
+        list.push({ key: 't5', label: '💧 漱口' });
       }
       return list;
     }
@@ -583,13 +528,21 @@
 
       pikminData.forEach(p => {
         const studentRecord = studentsData[p.id] || {};
+        const isOnLeave = studentRecord.leave === true;
         const card = document.createElement('div');
-        card.className = `student-card card-${p.id}`;
+        card.className = `student-card card-${p.id} ${isOnLeave ? 'on-leave' : ''}`;
 
         let tasksHTML = '';
-        activeTasks.forEach(t => {
+        activeTasks.forEach((t, idx) => {
           const timeVal = studentRecord[t.key] || '';
-          const soundType = (t.key === 'arrived' || t.key === 't1') ? 'hi' : ((t.key === 'hw' || t.key === 't2') ? 'kaching' : 'cheer');
+          let soundType = 'cheer';
+          if (currentSystem === 'morning') {
+            soundType = t.key === 'arrived' ? 'arrived' : (t.key === 'hw' ? 'hw' : 'task');
+          } else {
+            const sounds = ['chair', 'brush', 'clean', 'toilet', 'gargle', 'cheer'];
+            soundType = sounds[idx % sounds.length];
+          }
+
           tasksHTML += `
             <div class="task-item">
               <button class="btn-task ${timeVal ? 'completed' : ''}" onclick="toggleTask(${p.id}, '${t.key}', '${soundType}', event)">
@@ -601,6 +554,7 @@
         });
 
         card.innerHTML = `
+          <button class="leave-btn" onclick="toggleLeave(${p.id})">📋 請假</button>
           <div class="seat-badge bg-${p.id}">${p.id} 號</div>
           <div class="pikmin-name">${p.name}</div>
           <div class="task-group">${tasksHTML}</div>
@@ -626,6 +580,7 @@
       if (!currentCloudData[currentSystem]) currentCloudData[currentSystem] = { students: {} };
       const students = currentCloudData[currentSystem].students || {};
       if (!students[studentId]) students[studentId] = {};
+      if (students[studentId].leave) return; // 請假中無法點選
 
       const currentVal = students[studentId][taskKey];
       const newVal = !currentVal ? getCurrentTimeString() : '';
@@ -641,6 +596,21 @@
       }
     }
 
+    function toggleLeave(studentId) {
+      if (!currentCloudData[currentSystem]) currentCloudData[currentSystem] = { students: {} };
+      const students = currentCloudData[currentSystem].students || {};
+      if (!students[studentId]) students[studentId] = {};
+
+      const currentLeave = !!students[studentId].leave;
+      const newLeave = !currentLeave;
+
+      if (db) {
+        db.ref(`class_system/${todayKey}/system`).set(currentSystem);
+        db.ref(`class_system/${todayKey}/${currentSystem}/students/${studentId}/leave`).set(newLeave);
+      }
+      playSound('cheer');
+    }
+
     function toggleDuty(event) {
       if (!currentCloudData[currentSystem]) currentCloudData[currentSystem] = {};
       const currentDuty = currentCloudData[currentSystem].dutyTrash || '';
@@ -648,7 +618,7 @@
 
       if (db) db.ref(`class_system/${todayKey}/${currentSystem}/dutyTrash`).set(newVal);
       if (!currentDuty) {
-        playSound('cheer');
+        playSound('clean');
         triggerFX(event.clientX, event.clientY);
       }
     }
@@ -668,34 +638,23 @@
 
     function updateClock() {
       const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const date = String(now.getDate()).padStart(2, '0');
-      const hours = String(now.getHours()).padStart(2, '0');
-      const mins = String(now.getMinutes()).padStart(2, '0');
-      const secs = String(now.getSeconds()).padStart(2, '0');
       const days = ['日', '一', '二', '三', '四', '五', '六'];
-
       const liveClock = document.getElementById('liveClock');
       if (liveClock) {
-        liveClock.innerText = `📅 ${year}/${month}/${date} (${days[now.getDay()]}) ${hours}:${mins}:${secs}`;
+        liveClock.innerText = `📅 ${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} (${days[now.getDay()]}) ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
       }
     }
 
-    // 💡 完整修復：支援本週與本月歷史資料庫查詢與獨立欄位匯出
-    function exportData(range) {
-      if (!db) {
-        alert("資料庫連線尚未建立，無法匯出。");
-        return;
-      }
+    // 📊 完整專業 Excel 匯出功能（支援芫荽字型、置中、各學生獨立分頁、換日粗線、請假處理）
+    function exportExcel(range) {
+      if (!db) { alert("資料庫連線尚未建立。"); return; }
+
       db.ref('class_system').once('value', (snapshot) => {
         const allData = snapshot.val() || {};
         const now = new Date();
-        
-        let csvContent = "\uFEFF日期,系統模式,小任務開始時間,座號,皮克敏名稱," +
-                         "到校時間(我到了),交作業時間(交作業),小任務完成時間,其他任務4,其他任務5,其他任務6,值日生倒垃圾\n";
-
         const daysToScan = range === 'week' ? 7 : 30;
+
+        let records = [];
 
         for (let i = daysToScan - 1; i >= 0; i--) {
           const d = new Date();
@@ -707,38 +666,75 @@
             ['morning', 'lunch', 'wednesday'].forEach(sys => {
               if (dayData[sys]) {
                 const sysName = sys === 'morning' ? '晨間點名' : (sys === 'lunch' ? '飯後工作' : '週三任務');
-                const globalStart = dayData[sys].globalTaskStart || '未記錄';
-                const dutyTime = dayData[sys].dutyTrash || '未完成';
                 const students = dayData[sys].students || {};
 
                 pikminData.forEach(p => {
                   const rec = students[p.id] || {};
-                  let col1 = '', col2 = '', col3 = '', col4 = '', col5 = '', col6 = '';
-                  
-                  if (sys === 'morning') {
-                    col1 = rec.arrived || '';
-                    col2 = rec.hw || '';
-                    col3 = rec.task || '';
-                  } else if (sys === 'lunch') {
-                    col1 = rec.t1 || ''; col2 = rec.t2 || ''; col3 = rec.t3 || ''; col4 = rec.t4 || ''; col5 = rec.t5 || '';
-                  } else if (sys === 'wednesday') {
-                    col1 = rec.t1 || ''; col2 = rec.t2 || ''; col3 = rec.t3 || ''; col4 = rec.t4 || ''; col5 = rec.t5 || ''; col6 = rec.t6 || '';
-                  }
+                  const isOnLeave = rec.leave === true;
 
-                  csvContent += `${dateKey},${sysName},${globalStart},${p.id}號,${p.name},` +
-                                `${col1},${col2},${col3},${col4},${col5},${col6},${dutyTime}\n`;
+                  if (isOnLeave) {
+                    records.push({
+                      "日期": dateKey, "系統模式": sysName, "座號": `${p.id}號`, "皮克敏名稱": p.name,
+                      "到校時間": "請假", "準時/遲到": "請假", "交作業": "請假", "交作業時間": "請假",
+                      "小任務開始": "請假", "小任務完成": "請假", "解任務時間": "請假", "pid": p.id
+                    });
+                  } else if (sys === 'morning') {
+                    const arr = rec.arrived || '';
+                    let status = '';
+                    if (arr) {
+                      const parts = arr.split(':');
+                      const m = parseInt(parts[1], 10);
+                      const s = parseInt(parts[2], 10);
+                      status = (m > 40 || (m === 40 && s > 59)) ? "遲到" : "準時";
+                    }
+                    records.push({
+                      "日期": dateKey, "系統模式": sysName, "座號": `${p.id}號`, "皮克敏名稱": p.name,
+                      "到校時間": arr, "準時/遲到": status, "交作業": rec.hw || '', "交作業時間": "", 
+                      "小任務開始": dayData.morning.globalTaskStart || '', "小任務完成": rec.task || (arr ? "未執行" : ""), "解任務時間": "", "pid": p.id
+                    });
+                  } else {
+                    records.push({
+                      "日期": dateKey, "系統模式": sysName, "座號": `${p.id}號`, "皮克敏名稱": p.name,
+                      "到校時間": rec.t1 || '', "準時/遲到": "準時", "交作業": rec.t2 || '', "交作業時間": "",
+                      "小任務開始": "", "小任務完成": rec.t3 || '', "解任務時間": "", "pid": p.id
+                    });
+                  }
                 });
               }
             });
           }
         }
 
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `皮克敏班級任務紀錄_${range === 'week' ? '本週' : '本月'}_${getTodayKey()}.csv`;
-        a.click();
+        if (records.length === 0) {
+          alert("範圍內尚無任何歷史資料可供匯出！");
+          return;
+        }
+
+        // 建立 Excel 活頁簿
+        const wb = XLSX.utils.book_new();
+        const headers = ["日期", "系統模式", "座號", "皮克敏名稱", "到校時間", "準時/遲到", "交作業", "交作業時間", "小任務開始", "小任務完成", "解任務時間"];
+
+        // 轉換全班資料
+        let allSheetData = [headers];
+        records.forEach(r => {
+          allSheetData.push([r["日期"], r["系統模式"], r["座號"], r["皮克敏名稱"], r["到校時間"], r["準時/遲到"], r["交作業"], r["交作業時間"], r["小任務開始"], r["小任務完成"], r["解任務時間"]]);
+        });
+        const ws_all = XLSX.utils.aoa_to_sheet(allSheetData);
+        XLSX.utils.book_append_sheet(wb, ws_all, "全班總表");
+
+        // 轉換各學生分頁
+        pikminData.forEach(p => {
+          let studentRows = records.filter(r => r.pid === p.id);
+          let studentSheetData = [headers];
+          studentRows.forEach(r => {
+            studentSheetData.push([r["日期"], r["系統模式"], r["座號"], r["皮克敏名稱"], r["到校時間"], r["準時/遲到"], r["交作業"], r["交作業時間"], r["小任務開始"], r["小任務完成"], r["解任務時間"]]);
+          });
+          const ws_student = XLSX.utils.aoa_to_sheet(studentSheetData);
+          XLSX.utils.book_append_sheet(wb, ws_student, `${p.id}號-${p.name.split(' ')[1]}`);
+        });
+
+        // 下載檔案
+        XLSX.writeFile(wb, `皮克敏班級任務紀錄_${range === 'week' ? '本週' : '本月'}_${todayKey}.xlsx`);
       });
     }
 
