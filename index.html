@@ -9,250 +9,108 @@
       --morandi-green: #e2ebd9;
       --morandi-yellow: #f7f0e6;
       --morandi-blue: #e4ecef;
-      --card-bg: #ffffff;
       --text-dark: #2d3748;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif; }
     body {
       background-color: var(--morandi-green);
       background-image: radial-gradient(#b0bec5 1.5px, transparent 1.5px);
       background-size: 24px 24px;
       color: var(--text-dark);
-      padding: 16px 10px;
+      padding: 16px 12px;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       transition: background-color 0.4s ease;
     }
-
     body.mode-morning { background-color: var(--morandi-green); }
     body.mode-lunch { background-color: var(--morandi-yellow); }
-    body.mode-wednesday { background-color: var(--morandi-blue); }
 
     header {
-      background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(240,248,240,0.95) 100%);
-      padding: 16px 24px;
+      background: rgba(255,255,255,0.96);
+      padding: 14px 24px;
       border-radius: 24px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.08);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
       flex-wrap: wrap;
       gap: 12px;
       border: 3px solid #ffffff;
     }
-
-    .nav-tabs { display: flex; gap: 10px; }
-
+    .nav-tabs, .header-center, .action-btns { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .tab-btn {
-      background: #edf2f7;
-      color: #4a5568;
-      border: 2.5px solid #cbd5e0;
-      padding: 10px 20px;
-      border-radius: 20px;
-      font-size: 1.1rem;
-      font-weight: 800;
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      background: #edf2f7; color: #4a5568; border: 2.5px solid #cbd5e0;
+      padding: 10px 20px; border-radius: 20px; font-size: 1.1rem; font-weight: 800; cursor: pointer;
     }
-
-    .tab-btn:hover { transform: translateY(-2px); }
-    .tab-btn.active {
-      background: #38a169;
-      color: white;
-      border-color: #276749;
-      box-shadow: 0 4px 14px rgba(56, 161, 105, 0.4);
-      transform: scale(1.04);
-    }
-    body.mode-lunch .tab-btn.active { background: #dd6b20; border-color: #9c4221; box-shadow: 0 4px 14px rgba(221, 107, 32, 0.4); }
-    body.mode-wednesday .tab-btn.active { background: #3182ce; border-color: #2b6cb0; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.4); }
-
-    .header-center { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .tab-btn.active { background: #38a169; color: white; border-color: #276749; box-shadow: 0 4px 12px rgba(56,161,105,0.35); }
+    body.mode-lunch .tab-btn.active { background: #dd6b20; border-color: #9c4221; box-shadow: 0 4px 12px rgba(221,107,32,0.35); }
 
     .date-time-box {
-      background: #ffffff;
-      border: 2.5px solid #f6ad55;
-      padding: 8px 18px;
-      border-radius: 20px;
-      font-size: 1.15rem;
-      font-weight: 900;
-      color: #7b341e;
-      box-shadow: 0 3px 10px rgba(246, 173, 85, 0.2);
+      background: #fff; border: 2.5px solid #f6ad55; padding: 8px 18px;
+      border-radius: 20px; font-size: 1.15rem; font-weight: 900; color: #7b341e;
     }
-
     .task-start-btn {
-      background: #3182ce;
-      color: white;
-      border: 2.5px solid #2b6cb0;
-      padding: 8px 18px;
-      border-radius: 18px;
-      font-size: 1rem;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 3px 10px rgba(49, 130, 206, 0.3);
-      transition: all 0.2s;
+      background: #3182ce; color: white; border: 2.5px solid #2b6cb0;
+      padding: 8px 16px; border-radius: 18px; font-size: 1rem; font-weight: 900; cursor: pointer;
     }
-    .task-start-btn:hover { transform: scale(1.05); background: #2b6cb0; }
-
     .task-start-time {
-      font-size: 1rem;
-      color: #2b6cb0;
-      font-weight: 900;
-      background: #ebf8ff;
-      padding: 8px 14px;
-      border-radius: 16px;
-      border: 2.5px solid #bee3f8;
+      font-size: 1rem; color: #2b6cb0; font-weight: 900; background: #ebf8ff;
+      padding: 8px 14px; border-radius: 16px; border: 2.5px solid #bee3f8;
     }
-
-    .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-
     .export-btn {
-      background: #38a169;
-      color: white;
-      border: 2.5px solid #276749;
-      padding: 8px 14px;
-      border-radius: 14px;
-      font-size: 0.95rem;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 3px 8px rgba(56, 161, 105, 0.2);
-      transition: all 0.2s;
+      background: #38a169; color: white; border: 2.5px solid #276749;
+      padding: 8px 14px; border-radius: 14px; font-size: 0.95rem; font-weight: 900; cursor: pointer;
     }
-    .export-btn:hover { background: #2f855a; transform: translateY(-2px); }
-
     .reset-btn {
-      background: #edf2f7;
-      color: #718096;
-      border: 2.5px solid #cbd5e0;
-      padding: 8px 14px;
-      border-radius: 14px;
-      font-size: 0.9rem;
-      font-weight: 900;
-      cursor: pointer;
+      background: #edf2f7; color: #718096; border: 2.5px solid #cbd5e0;
+      padding: 8px 14px; border-radius: 14px; font-size: 0.9rem; font-weight: 900; cursor: pointer;
     }
 
-    /* 關鍵：強制 8 張卡片排在同一橫排 */
+    /* 8位學生強制同一橫排 */
     .students-grid {
-      display: flex;
-      flex-wrap: nowrap;
+      display: grid;
+      grid-template-columns: repeat(8, minmax(125px, 1fr));
       gap: 10px;
-      justify-content: center;
       width: 100%;
-      max-width: 100%;
       margin: 0 auto;
       padding-bottom: 10px;
       overflow-x: auto;
     }
-
     .student-card {
-      background: white;
-      border-radius: 16px;
-      padding: 12px 8px;
-      width: 12.2%; /* 8張平均分攤寬度 */
-      min-width: 135px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.04);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      border-top: 7px solid #ccc;
-      position: relative;
-      transition: all 0.3s ease;
+      background: white; border-radius: 16px; padding: 12px 8px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+      display: flex; flex-direction: column; align-items: center;
+      border-top: 7px solid #ccc; position: relative;
     }
-
-    .student-card.on-leave {
-      opacity: 0.55;
-      background: #f1f3f5;
-    }
-
+    .student-card.on-leave { opacity: 0.55; background: #f1f3f5; }
     .leave-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: #f8f9fa;
-      border: 1.2px solid #ced4da;
-      padding: 2px 6px;
-      border-radius: 8px;
-      font-size: 0.65rem;
-      font-weight: bold;
-      color: #495057;
-      cursor: pointer;
-      transition: all 0.2s;
+      position: absolute; top: 8px; right: 6px; background: #f8f9fa;
+      border: 1.2px solid #ced4da; padding: 2px 5px; border-radius: 8px;
+      font-size: 0.65rem; font-weight: bold; color: #495057; cursor: pointer;
     }
-    .leave-btn:hover { background: #e9ecef; }
-    .student-card.on-leave .leave-btn {
-      background: #495057;
-      color: white;
-      border-color: #343a40;
-    }
-
+    .student-card.on-leave .leave-btn { background: #495057; color: white; }
     .seat-badge {
-      font-size: 0.95rem;
-      font-weight: 900;
-      color: white;
-      padding: 3px 12px;
-      border-radius: 12px;
-      margin-bottom: 4px;
-      background: #3182ce;
+      font-size: 0.95rem; font-weight: 900; color: white;
+      padding: 3px 12px; border-radius: 12px; margin-bottom: 4px;
     }
-
-    .pikmin-name {
-      font-size: 0.95rem;
-      font-weight: bold;
-      color: var(--text-dark);
-      margin-bottom: 10px;
-      text-align: center;
-      white-space: nowrap;
-    }
-
-    .task-group { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+    .pikmin-name { font-size: 0.95rem; font-weight: bold; margin-bottom: 10px; white-space: nowrap; }
+    .task-group { display: flex; flex-direction: column; gap: 7px; width: 100%; }
     .task-item { display: flex; flex-direction: column; align-items: center; width: 100%; }
-
     .btn-task {
-      width: 100%;
-      padding: 8px 4px;
-      border-radius: 12px;
-      border: 2px solid #e2e8f0;
-      background: #f8fafc;
-      color: var(--text-dark);
-      font-size: 0.85rem;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-      white-space: nowrap;
+      width: 100%; padding: 8px 4px; border-radius: 12px; border: 2px solid #e2e8f0;
+      background: #f8fafc; color: var(--text-dark); font-size: 0.85rem; font-weight: bold;
+      cursor: pointer; white-space: nowrap;
     }
     .btn-task.completed { background: #f0fff4; border-color: #48bb78; color: #276749; }
     .student-card.on-leave .btn-task { pointer-events: none; background: #e9ecef; color: #adb5bd; }
-
-    .time-tag {
-      font-size: 0.7rem;
-      color: #276749;
-      font-weight: 800;
-      margin-top: 2px;
-      height: 14px;
-      visibility: hidden;
-    }
+    .time-tag { font-size: 0.7rem; color: #276749; font-weight: 800; margin-top: 2px; height: 14px; visibility: hidden; }
     .time-tag.show { visibility: visible; }
 
     .duty-bar {
-      background: rgba(255,255,255,0.92);
-      padding: 10px 20px;
-      border-radius: 18px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 12px;
+      background: rgba(255,255,255,0.92); padding: 10px 20px; border-radius: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04); display: flex; justify-content: center; margin-top: 12px;
     }
     .duty-container { display: flex; align-items: center; gap: 16px; width: 100%; max-width: 480px; }
     .btn-duty {
@@ -266,20 +124,12 @@
       display: flex; justify-content: space-around; align-items: flex-end;
       padding: 5px 30px 0 30px; margin-top: auto; pointer-events: none;
     }
-    .pikmin-sprite {
-      font-size: 2rem; display: flex; flex-direction: column; align-items: center;
-      animation: sway 3s ease-in-out infinite alternate;
-    }
+    .pikmin-sprite { font-size: 2rem; display: flex; flex-direction: column; align-items: center; animation: sway 3s ease-in-out infinite alternate; }
     .flower-stem { font-size: 1.1rem; margin-bottom: -6px; }
     @keyframes sway { 0% { transform: rotate(-5deg); } 100% { transform: rotate(5deg); } }
-
-    .confetti {
-      position: fixed; pointer-events: none; width: 10px; height: 10px; border-radius: 50%;
-      animation: floatUp 1s ease-out forwards; z-index: 99;
-    }
+    .confetti { position: fixed; pointer-events: none; width: 10px; height: 10px; border-radius: 50%; animation: floatUp 1s ease-out forwards; z-index: 99; }
     @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-80px); } }
   </style>
-
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
@@ -290,13 +140,304 @@
       <button class="tab-btn active" id="tabMorning" onclick="switchSystem('morning')">☀️ 晨間點名</button>
       <button class="tab-btn" id="tabLunch" onclick="switchSystem('lunch')">🍱 飯後任務</button>
     </div>
-
     <div class="header-center">
       <div class="date-time-box" id="liveClock">📅 讀取中...</div>
       <button class="task-start-btn" id="taskStartBtn" onclick="startGlobalTask()" style="display: none;">⏱️ 小任務開始</button>
       <div class="task-start-time" id="taskStartTimeDisplay" style="display: none;">開始：未記錄</div>
     </div>
-
     <div class="action-btns">
       <button class="export-btn" onclick="exportCSV('week')">📊 匯出本週 (CSV)</button>
-      <button class="export-btn" onclick="exportCSV('month')">📅 匯出本月 (CSV
+      <button class="export-btn" onclick="exportCSV('month')">📅 匯出本月 (CSV)</button>
+      <button class="reset-btn" onclick="resetToday()">🔄 重置今天</button>
+    </div>
+  </header>
+
+  <div class="students-grid" id="studentsRow"></div>
+
+  <div class="duty-bar" id="footerDuty" style="display: none;">
+    <div class="duty-container">
+      <button class="btn-duty" id="dutyBtn" onclick="toggleDuty(event)">⭐ 值日生任務</button>
+      <div class="duty-time" id="dutyTimeTag">未完成</div>
+    </div>
+  </div>
+
+  <div class="pikmin-garden">
+    <div class="pikmin-sprite"><span class="flower-stem">🌸</span>🔴</div>
+    <div class="pikmin-sprite"><span class="flower-stem">🌱</span>🟡</div>
+    <div class="pikmin-sprite"><span class="flower-stem">🍃</span>🔵</div>
+    <div class="pikmin-sprite"><span class="flower-stem">🌸</span>🟣</div>
+    <div class="pikmin-sprite"><span class="flower-stem">🌱</span>⚪</div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      databaseURL: "https://morning-check-356db-default-rtdb.firebaseio.com/",
+      students: [
+        { id: 1, name: "紅色皮克敏", colorBorder: "#e53e3e" },
+        { id: 2, name: "黃色皮克敏", colorBorder: "#d69e2e" },
+        { id: 3, name: "藍色皮克敏", colorBorder: "#3182ce" },
+        { id: 4, name: "紫色皮克敏", colorBorder: "#805ad5" },
+        { id: 5, name: "白色皮克敏", colorBorder: "#718096" },
+        { id: 6, name: "羽翼皮克敏", colorBorder: "#ed64a6" },
+        { id: 7, name: "岩石皮克敏", colorBorder: "#4a5568" },
+        { id: 8, name: "冰霜皮克敏", colorBorder: "#00a3c4" }
+      ],
+      tasks: {
+        morning: [
+          { key: 'arrived', label: '✋ 我到了', sound: 'arrived' },
+          { key: 'hw', label: '📖 交作業', sound: 'hw' },
+          { key: 'task', label: '✍️ 小任務', sound: 'task' }
+        ],
+        lunchNormal: [
+          { key: 't1', label: '🪑 抬椅子', sound: 'chair' },
+          { key: 't2', label: '🪥 刷牙', sound: 'brush' },
+          { key: 't3', label: '🚻 上廁所', sound: 'toilet' },
+          { key: 't4', label: '🧹 打掃', sound: 'clean' }
+        ],
+        lunchTuesday: [
+          { key: 't1', label: '🪑 抬椅子', sound: 'chair' },
+          { key: 't2', label: '🪥 刷牙', sound: 'brush' },
+          { key: 't3', label: '🚻 上廁所', sound: 'toilet' },
+          { key: 't4', label: '💧 漱口', sound: 'gargle' },
+          { key: 't5', label: '🧹 打掃', sound: 'clean' }
+        ],
+        lunchWed: [
+          { key: 't1', label: '🪥 刷牙', sound: 'brush' },
+          { key: 't2', label: '🗄️ 抽屜', sound: 'clean' },
+          { key: 't3', label: '🪑 椅子', sound: 'chair' },
+          { key: 't4', label: '📚 書本', sound: 'hw' },
+          { key: 't5', label: '🚪 櫃子', sound: 'task' },
+          { key: 't6', label: '📝 聯絡簿', sound: 'cheer' }
+        ]
+      }
+    };
+
+    let db = null;
+    try { firebase.initializeApp({ databaseURL: CONFIG.databaseURL }); db = firebase.database(); } catch (e) {}
+
+    let currentSystem = 'morning';
+    let currentCloudData = {};
+    const todayKey = getTodayKey();
+
+    updateUIState(); renderCards(); updateClock();
+    setInterval(updateClock, 1000);
+
+    if (db) {
+      db.ref('class_system/' + todayKey).on('value', (snapshot) => {
+        currentCloudData = snapshot.val() || {};
+        if (currentCloudData.system) currentSystem = currentCloudData.system;
+        updateUIState(); renderCards();
+      });
+    }
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(type) {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const now = audioCtx.currentTime;
+        const notes = type === 'chair' ? [220, 330] : type === 'hw' ? [440, 659.25] : type === 'gargle' ? [587.33, 880, 1046.5] : [523.25, 659.25, 783.99];
+        notes.forEach((f, i) => {
+          const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+          osc.type = (type === 'chair' || type === 'hw') ? 'triangle' : 'sine';
+          osc.frequency.setValueAtTime(f, now + i * 0.05);
+          g.gain.setValueAtTime(0.18, now + i * 0.05);
+          g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.05 + 0.14);
+          osc.connect(g); g.connect(audioCtx.destination);
+          osc.start(now + i * 0.05); osc.stop(now + i * 0.05 + 0.14);
+        });
+      } catch (e) {}
+    }
+
+    function getTodayKey() {
+      const now = new Date();
+      const tw = new Date(now.getTime() + (8 * 3600000) + (now.getTimezoneOffset() * 60000));
+      return `${tw.getFullYear()}-${String(tw.getMonth() + 1).padStart(2, '0')}-${String(tw.getDate()).padStart(2, '0')}`;
+    }
+
+    function getCurrentTimeString() {
+      const now = new Date();
+      return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+    }
+
+    function startGlobalTask() {
+      if (db) db.ref(`class_system/${todayKey}/morning/globalTaskStart`).set(getCurrentTimeString());
+      playSound('arrived');
+    }
+
+    function switchSystem(sys) {
+      currentSystem = sys;
+      if (db) db.ref(`class_system/${todayKey}/system`).set(sys);
+      updateUIState(); renderCards();
+    }
+
+    function updateUIState() {
+      document.body.className = `mode-${currentSystem}`;
+      document.getElementById('tabMorning').className = `tab-btn ${currentSystem === 'morning' ? 'active' : ''}`;
+      document.getElementById('tabLunch').className = `tab-btn ${currentSystem === 'lunch' ? 'active' : ''}`;
+      const isMorning = (currentSystem === 'morning');
+      document.getElementById('taskStartBtn').style.display = isMorning ? 'inline-block' : 'none';
+      document.getElementById('footerDuty').style.display = isMorning ? 'none' : 'flex';
+      const sysData = currentCloudData.morning || {};
+      const disp = document.getElementById('taskStartTimeDisplay');
+      if (isMorning && sysData.globalTaskStart) {
+        disp.style.display = 'inline-block';
+        disp.innerText = `⏱️ 開始：${sysData.globalTaskStart}`;
+      } else {
+        disp.style.display = 'none';
+      }
+    }
+
+    function getActiveTasks() {
+      if (currentSystem === 'morning') return CONFIG.tasks.morning;
+      const d = new Date().getDay();
+      if (d === 3) return CONFIG.tasks.lunchWed;
+      if (d === 2) return CONFIG.tasks.lunchTuesday;
+      return CONFIG.tasks.lunchNormal;
+    }
+
+    function renderCards() {
+      const row = document.getElementById('studentsRow');
+      if (!row) return;
+      row.innerHTML = '';
+      const activeTasks = getActiveTasks();
+      const sysData = currentCloudData[currentSystem] || {};
+      const studentsData = sysData.students || {};
+
+      CONFIG.students.forEach(p => {
+        const rec = studentsData[p.id] || {};
+        const isOnLeave = rec.leave === true;
+        const card = document.createElement('div');
+        card.className = `student-card ${isOnLeave ? 'on-leave' : ''}`;
+        card.style.borderTopColor = p.colorBorder;
+
+        let tasksHTML = '';
+        activeTasks.forEach(t => {
+          const timeVal = rec[t.key] || '';
+          tasksHTML += `
+            <div class="task-item">
+              <button class="btn-task ${timeVal ? 'completed' : ''}" onclick="toggleTask(${p.id}, '${t.key}', '${t.sound}', event)">${t.label}</button>
+              <div class="time-tag ${timeVal ? 'show' : ''}">${timeVal ? '✓ ' + timeVal : ''}</div>
+            </div>`;
+        });
+
+        card.innerHTML = `
+          <button class="leave-btn" onclick="toggleLeave(${p.id})">📋 請假</button>
+          <div class="seat-badge" style="background: ${p.colorBorder}">${p.id} 號</div>
+          <div class="pikmin-name">${p.name}</div>
+          <div class="task-group">${tasksHTML}</div>`;
+        row.appendChild(card);
+      });
+
+      const dutyTime = sysData.dutyTrash || '';
+      const dutyBtn = document.getElementById('dutyBtn');
+      const dutyTimeTag = document.getElementById('dutyTimeTag');
+      if (dutyBtn && dutyTimeTag) {
+        dutyBtn.className = dutyTime ? 'btn-duty completed' : 'btn-duty';
+        dutyTimeTag.innerText = dutyTime ? '✓ ' + dutyTime : '未完成';
+      }
+    }
+
+    function toggleTask(studentId, taskKey, soundType, event) {
+      if (!currentCloudData[currentSystem]) currentCloudData[currentSystem] = { students: {} };
+      const students = currentCloudData[currentSystem].students || {};
+      if (!students[studentId]) students[studentId] = {};
+      if (students[studentId].leave) return;
+      const newVal = !students[studentId][taskKey] ? getCurrentTimeString() : '';
+      if (db) {
+        db.ref(`class_system/${todayKey}/system`).set(currentSystem);
+        db.ref(`class_system/${todayKey}/${currentSystem}/students/${studentId}/${taskKey}`).set(newVal);
+      }
+      if (newVal) { playSound(soundType); triggerFX(event.clientX, event.clientY); }
+    }
+
+    function toggleLeave(studentId) {
+      if (!currentCloudData[currentSystem]) currentCloudData[currentSystem] = { students: {} };
+      const students = currentCloudData[currentSystem].students || {};
+      const newLeave = !(students[studentId] && students[studentId].leave);
+      if (db) {
+        db.ref(`class_system/${todayKey}/system`).set(currentSystem);
+        db.ref(`class_system/${todayKey}/${currentSystem}/students/${studentId}/leave`).set(newLeave);
+      }
+      playSound('chair');
+    }
+
+    function toggleDuty(event) {
+      const currentDuty = (currentCloudData[currentSystem] && currentCloudData[currentSystem].dutyTrash) || '';
+      const newVal = !currentDuty ? getCurrentTimeString() : '';
+      if (db) db.ref(`class_system/${todayKey}/${currentSystem}/dutyTrash`).set(newVal);
+      if (newVal) { playSound('gargle'); if (event) triggerFX(event.clientX, event.clientY); }
+    }
+
+    function triggerFX(x, y) {
+      const colors = ['#48bb78', '#38b2ac', '#4299e1', '#ed64a6', '#ecc94b'];
+      for (let i = 0; i < 8; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti';
+        p.style.left = (x + Math.random() * 40 - 20) + 'px';
+        p.style.top = (y + Math.random() * 20 - 10) + 'px';
+        p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 1000);
+      }
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const days = ['日', '一', '二', '三', '四', '五', '六'];
+      const el = document.getElementById('liveClock');
+      if (el) el.innerText = `📅 ${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} (${days[now.getDay()]}) ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+    }
+
+    function exportCSV(range) {
+      if (!db) return;
+      db.ref('class_system').once('value', (snapshot) => {
+        const allData = snapshot.val() || {};
+        const now = new Date();
+        const daysToScan = range === 'week' ? 7 : 30;
+        let csvRows = [["日期", "系統模式", "座號", "學生名稱", "到校時間", "準時/遲到", "作業狀態", "其他任務", "小任務開始", "完成時間"]];
+        for (let i = daysToScan - 1; i >= 0; i--) {
+          const d = new Date(); d.setDate(now.getDate() - i);
+          const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+          const dayData = allData[dateKey];
+          if (dayData) {
+            ['morning', 'lunch'].forEach(sys => {
+              if (dayData[sys]) {
+                const sysName = sys === 'morning' ? '晨間點名' : '飯後任務';
+                const students = dayData[sys].students || {};
+                const globalStart = dayData.morning ? (dayData.morning.globalTaskStart || "") : "";
+                CONFIG.students.forEach(p => {
+                  const rec = students[p.id] || {};
+                  if (rec.leave) {
+                    csvRows.push([dateKey, sysName, `${p.id}號`, p.name, "請假", "請假", "請假", "請假", "請假", "請假"]);
+                  } else if (sys === 'morning') {
+                    const arr = rec.arrived || '';
+                    let status = '';
+                    if (arr) {
+                      const parts = arr.split(':');
+                      const m = parseInt(parts[1], 10), s = parseInt(parts[2], 10);
+                      status = (m > 40 || (m === 40 && s > 59)) ? "遲到" : "準時";
+                    }
+                    csvRows.push([dateKey, sysName, `${p.id}號`, p.name, arr, status, rec.hw || '', rec.task || '', globalStart, ""]);
+                  } else {
+                    csvRows.push([dateKey, sysName, `${p.id}號`, p.name, rec.t1 || '', "準時", rec.t2 || '', rec.t3 || '', "", rec.t5 || '']);
+                  }
+                });
+              }
+            });
+          }
+        }
+        if (csvRows.length === 1) { alert("範圍內尚無任何歷史資料！"); return; }
+        const blob = new Blob(["\uFEFF" + csvRows.map(e => e.join(",")).join("\n")], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `班級任務紀錄_${range === 'week' ? '本週' : '本月'}_${todayKey}.csv`;
+        link.click();
+      });
+    }
+
+    function resetToday() {
+      if (confirm('確定要重置今天的全部紀錄嗎？') && db) db.ref('class_system/' + todayKey).remove();
+    }
+  </script>
+</body>
+</html>
